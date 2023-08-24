@@ -1,80 +1,72 @@
+#nullable enable
+
 using System;
 using System.Text;
-using JetBrains.Annotations;
 
 namespace Razensoft
 {
     public sealed class XXTEA
     {
-        [NotNull]
-        private static UTF8Encoding UTF8NoBom => new UTF8Encoding(
+        private static UTF8Encoding UTF8NoBom => new(
             encoderShouldEmitUTF8Identifier: false,
             throwOnInvalidBytes: true
         );
 
-        [NotNull]
         private readonly uint[] _key;
 
-        public XXTEA([NotNull] string key)
+        public XXTEA(string key)
         {
             key = key ?? throw new ArgumentNullException(nameof(key));
             _key = FixKey(key);
         }
 
-        public XXTEA([NotNull] byte[] key)
+        public XXTEA(byte[] key)
         {
             key = key ?? throw new ArgumentNullException(nameof(key));
             _key = FixKey(key);
         }
 
-        [NotNull]
-        public byte[] Encrypt([NotNull] string data)
+        public byte[] Encrypt(string data)
         {
             data = data ?? throw new ArgumentNullException(nameof(data));
             return Encrypt(UTF8NoBom.GetBytes(data));
         }
 
-        [NotNull]
-        public byte[] Encrypt([NotNull] byte[] data)
+        public byte[] Encrypt(byte[] data)
         {
             data = data ?? throw new ArgumentNullException(nameof(data));
             return Encrypt(data, _key);
         }
 
-        [NotNull]
-        public static byte[] Encrypt([NotNull] string data, [NotNull] byte[] key)
+        public static byte[] Encrypt(string data, byte[] key)
         {
             data = data ?? throw new ArgumentNullException(nameof(data));
             key = key ?? throw new ArgumentNullException(nameof(key));
             return Encrypt(UTF8NoBom.GetBytes(data), key);
         }
 
-        [NotNull]
-        public static byte[] Encrypt([NotNull] byte[] data, [NotNull] string key)
+        public static byte[] Encrypt(byte[] data, string key)
         {
             data = data ?? throw new ArgumentNullException(nameof(data));
             key = key ?? throw new ArgumentNullException(nameof(key));
             return Encrypt(data, UTF8NoBom.GetBytes(key));
         }
 
-        [NotNull]
-        public static byte[] Encrypt([NotNull] string data, [NotNull] string key)
+        public static byte[] Encrypt(string data, string key)
         {
             data = data ?? throw new ArgumentNullException(nameof(data));
             key = key ?? throw new ArgumentNullException(nameof(key));
             return Encrypt(UTF8NoBom.GetBytes(data), UTF8NoBom.GetBytes(key));
         }
 
-        [NotNull]
-        public static byte[] Encrypt([NotNull] byte[] data, [NotNull] byte[] key)
+        public static byte[] Encrypt(byte[] data, byte[] key)
         {
             data = data ?? throw new ArgumentNullException(nameof(data));
             key = key ?? throw new ArgumentNullException(nameof(key));
             return Encrypt(data, FixKey(key));
         }
 
-        [NotNull]
-        private static byte[] Encrypt([NotNull] byte[] data, [NotNull] uint[] key)
+        private static byte[] Encrypt(byte[] data, uint[] key)
         {
             if (data.Length == 0)
             {
@@ -86,54 +78,47 @@ namespace Razensoft
             return ToByteArray(encrypted, false);
         }
 
-        [NotNull]
-        public string DecryptString([NotNull] byte[] data)
+        public string DecryptString(byte[] data)
         {
             data = data ?? throw new ArgumentNullException(nameof(data));
             return UTF8NoBom.GetString(Decrypt(data));
         }
 
-        [NotNull]
-        public byte[] Decrypt([NotNull] byte[] data)
+        public byte[] Decrypt(byte[] data)
         {
             data = data ?? throw new ArgumentNullException(nameof(data));
             return Decrypt(data, _key);
         }
 
-        [NotNull]
-        public static byte[] Decrypt([NotNull] byte[] data, [NotNull] byte[] key)
+        public static byte[] Decrypt(byte[] data, byte[] key)
         {
             data = data ?? throw new ArgumentNullException(nameof(data));
             key = key ?? throw new ArgumentNullException(nameof(key));
             return Decrypt(data, FixKey(key));
         }
 
-        [NotNull]
-        public static byte[] Decrypt([NotNull] byte[] data, [NotNull] string key)
+        public static byte[] Decrypt(byte[] data, string key)
         {
             data = data ?? throw new ArgumentNullException(nameof(data));
             key = key ?? throw new ArgumentNullException(nameof(key));
             return Decrypt(data, UTF8NoBom.GetBytes(key));
         }
 
-        [NotNull]
-        public static string DecryptString([NotNull] byte[] data, [NotNull] byte[] key)
+        public static string DecryptString(byte[] data, byte[] key)
         {
             data = data ?? throw new ArgumentNullException(nameof(data));
             key = key ?? throw new ArgumentNullException(nameof(key));
             return UTF8NoBom.GetString(Decrypt(data, key));
         }
 
-        [NotNull]
-        public static string DecryptString([NotNull] byte[] data, [NotNull] string key)
+        public static string DecryptString(byte[] data, string key)
         {
             data = data ?? throw new ArgumentNullException(nameof(data));
             key = key ?? throw new ArgumentNullException(nameof(key));
             return UTF8NoBom.GetString(Decrypt(data, key));
         }
 
-        [NotNull]
-        private static byte[] Decrypt([NotNull] byte[] data, [NotNull] uint[] key)
+        private static byte[] Decrypt(byte[] data, uint[] key)
         {
             if (data.Length == 0)
             {
@@ -145,22 +130,19 @@ namespace Razensoft
             return ToByteArray(decrypted, true);
         }
 
-        [NotNull]
-        private static uint[] FixKey([NotNull] string key)
+        private static uint[] FixKey(string key)
         {
             return FixKey(UTF8NoBom.GetBytes(key));
         }
 
-        [NotNull]
-        private static uint[] FixKey([NotNull] byte[] key)
+        private static uint[] FixKey(byte[] key)
         {
             var fixedKey = new uint[4];
             Buffer.BlockCopy(key, 0, fixedKey, 0, 16);
             return fixedKey;
         }
 
-        [NotNull]
-        private static uint[] Encrypt([NotNull] uint[] v, [NotNull] uint[] k)
+        private static uint[] Encrypt(uint[] v, uint[] k)
         {
             const uint delta = 0x9E3779B9;
             var n = v.Length - 1;
@@ -194,8 +176,7 @@ namespace Razensoft
             return v;
         }
 
-        [NotNull]
-        private static uint[] Decrypt([NotNull] uint[] v, [NotNull] uint[] k)
+        private static uint[] Decrypt(uint[] v, uint[] k)
         {
             const uint delta = 0x9E3779B9;
             var n = v.Length - 1;
@@ -229,8 +210,7 @@ namespace Razensoft
             return v;
         }
 
-        [NotNull]
-        private static uint[] ToUInt32Array([NotNull] byte[] data, bool includeLength)
+        private static uint[] ToUInt32Array(byte[] data, bool includeLength)
         {
             var length = data.Length;
             var n = (length & 3) == 0 ? length >> 2 : (length >> 2) + 1;
@@ -249,8 +229,7 @@ namespace Razensoft
             return result;
         }
 
-        [NotNull]
-        private static byte[] ToByteArray([NotNull] uint[] data, bool includeLength)
+        private static byte[] ToByteArray(uint[] data, bool includeLength)
         {
             var n = data.Length << 2;
             if (includeLength)
@@ -270,7 +249,7 @@ namespace Razensoft
             return result;
         }
 
-        private static uint MX(uint sum, uint y, uint z, int p, uint e, [NotNull] uint[] k)
+        private static uint MX(uint sum, uint y, uint z, int p, uint e, uint[] k)
         {
             return (((z >> 5) ^ (y << 2)) + ((y >> 3) ^ (z << 4))) ^ ((sum ^ y) + (k[(p & 3) ^ e] ^ z));
         }
